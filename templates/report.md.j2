@@ -1,0 +1,98 @@
+# TrendForge Daily Report - {{ report.date }}
+
+**#1 on GitHub Trending today:** [{{ report.repo.owner }}/{{ report.repo.name }}]({{ report.repo.url }})
+
+| Signal | Value |
+| --- | --- |
+| Description | {{ report.repo.description or "_(none listed)_" }} |
+| Language | {{ report.repo.language or "n/a" }} |
+| Stars today | {{ report.repo.stars_today }} |
+| Total stars | {{ report.repo.total_stars }} |
+| Forks | {{ report.repo.forks }} |
+| Star velocity | {{ report.star_velocity }} stars/day since last snapshot |
+| License | {{ report.license_risk.spdx or "unknown" }} ({{ report.license_risk.level }}) |
+| Reuse policy | {{ "reuse allowed with attribution" if report.license_risk.can_reuse else "no code reuse - link and summarize only" }} |
+
+## Why it trended
+
+{{ report.trend_reasons.summary }}
+
+- **Pain point:** {{ report.trend_reasons.pain_point }}
+- **Timing:** {{ report.trend_reasons.timing }}
+- **Developer experience:** {{ report.trend_reasons.dx }}
+- **Documentation:** {{ report.trend_reasons.docs }}
+- **Community:** {{ report.trend_reasons.community }}
+
+### License notes
+
+{{ report.license_risk.notes }}
+
+## What users complain about
+
+Top themes (category: count):
+
+{% for name, count in themes %}
+- **{{ name }}** - {{ count }} report(s)
+{% endfor %}
+{% if not themes %}
+_No complaint themes available._
+{% endif %}
+
+### Loudest individual complaints
+
+{% for item in report.complaints[:15] %}
+- [{{ item.category }}] [{{ item.title }}]({{ item.url }}) - {{ item.comments }} comments, {{ item.reactions }} reactions
+{% endfor %}
+{% if not report.complaints %}
+_No complaints could be fetched (no token or rate-limited). Re-run with `GITHUB_TOKEN` set._
+{% endif %}
+
+## Original project we are forging: {{ report.idea.name }}
+
+- **Slug:** `{{ report.idea.slug }}`
+- **Tagline:** {{ report.idea.tagline }}
+- **Problem:** {{ report.idea.problem }}
+- **Target users:** {{ report.idea.target_users }}
+
+### MVP features
+
+{% for item in report.idea.mvp_features %}
+- {{ item }}
+{% endfor %}
+
+### Stack
+
+{% for item in report.idea.stack %}
+- {{ item }}
+{% endfor %}
+
+### 7-day plan
+
+{% for item in report.idea.seven_day_plan %}
+- {{ item }}
+{% endfor %}
+
+### Monetization
+
+{% for item in report.idea.monetization %}
+- {{ item }}
+{% endfor %}
+
+### Launch plan
+
+{% for item in report.idea.launch_plan %}
+- {{ item }}
+{% endfor %}
+
+## Artifacts
+
+- Report: `reports/{{ report.date }}.md`
+- Scaffold: `generated/{{ report.date }}-{{ report.idea.slug }}/`
+- Snapshots: `data/snapshots.json`
+
+## Safety
+
+TrendForge read **metadata, README text, issue titles, and discussion text only** -
+no source code from `{{ report.repo.owner }}/{{ report.repo.name }}` was copied into
+this repository. License decision: **{{ report.license_risk.level }}** - reuse policy
+is documented above. No fake stars, bots, or trending manipulation were used.

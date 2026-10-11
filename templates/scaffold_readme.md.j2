@@ -1,0 +1,65 @@
+# {{ idea.name }}
+
+> {{ idea.tagline }}
+
+## The problem
+
+{{ idea.problem }}
+
+**Built for:** {{ idea.target_users }}
+
+## MVP features
+
+{% for item in idea.mvp_features %}
+- {{ item }}
+{% endfor %}
+
+## Tech stack
+
+{% for item in idea.stack %}
+- {{ item }}
+{% endfor %}
+
+## Getting started
+
+```bash
+make setup     # install the package plus dev tools
+make run       # start the API on 127.0.0.1:8000
+```
+
+Health check: `GET /health` returns `{"service": "{{ package }}", "status": "ok"}`.
+
+```bash
+make test      # pytest
+make lint      # ruff + bandit
+```
+
+Copy `.env.example` to `.env` and adjust configuration. Never commit real secrets.
+
+## 7-day plan
+
+{% for item in idea.seven_day_plan %}
+- {{ item }}
+{% endfor %}
+
+## Monetization
+
+{% for item in idea.monetization %}
+- {{ item }}
+{% endfor %}
+
+## Launch plan
+
+{% for item in idea.launch_plan %}
+- {{ item }}
+{% endfor %}
+
+## Provenance
+
+Designed by [TrendForge](../../README.md) on {{ date }} from the *complaints* of a
+trending repository - metadata only (README text and issue titles). No source code,
+architecture, naming, or wording was copied from any other project.
+
+## License
+
+MIT - see [LICENSE](LICENSE).

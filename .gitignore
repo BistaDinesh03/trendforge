@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+build/
+*.egg-info/
+
+# Secrets - never commit tokens
+.env
+.env.*
+!.env.example
+
+# Tool caches
+.cache/
+.pytest_cache/
+.ruff_cache/
