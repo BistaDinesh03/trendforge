@@ -6,7 +6,7 @@
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-pip install pytest ruff bandit     # dev tools (also declared in pyproject.toml)
+pip install pytest ruff bandit mypy  # dev tools (also declared in pyproject.toml)
 ```
 
 Python 3.12 is used in CI; local runs work on Python 3.11+.
@@ -30,10 +30,15 @@ Get a token: GitHub → Settings → Developer settings → Personal access toke
 
 ```bash
 python main.py --dry-run    # analyse + write reports/data/generated, no git push
-python main.py              # full run: commits reports/, data/, generated/, README.md
+python main.py              # full run: commits reports/, data/, generated/ + report index
 ```
 
 A dry run prints `[dry-run] would commit: ...` instead of pushing.
+
+The report index lives between `<!-- trendforge:reports:start -->` and
+`<!-- trendforge:reports:end -->` markers in `README.md`; each run rewrites
+only that block. If the markers are absent, the index is written to
+`REPORTS.md` instead - `README.md` is never overwritten by the pipeline.
 
 ## 4. Enable GitHub Actions
 
@@ -52,15 +57,26 @@ github-actions dependencies current (`.github/dependabot.yml`, weekly).
 
 | Path | Contents |
 | --- | --- |
-| `reports/YYYY-MM-DD.md` | Daily analysis report (indexed in `README.md`) |
+| `reports/YYYY-MM-DD.md` | Daily analysis report (indexed between the markers in `README.md`) |
 | `data/snapshots.json` | Star/fork snapshots used to compute star velocity |
 | `generated/YYYY-MM-DD-<slug>/` | Original scaffold for the day's idea |
 | `.cache/` | 24-hour GitHub API response cache (git-ignored) |
 
+## 6. Branch protection
+
+`main` is protected by the repository ruleset **protect-main**:
+
+- pull requests only, 1 approving review, stale reviews dismissed on push
+- required status checks: `lint` + `typecheck` (strict: branch up to date)
+- linear history, no force pushes, no branch deletion
+- the repository owner can always bypass (Settings → Rules → Branches)
+
 ## Quality gates
 
 ```bash
-pytest -q           # unit tests
-ruff check .        # lint (E, F, I, B, S/bandit, UP rules)
+pytest -q                    # unit tests
+ruff check .                 # lint (E, F, I, B, S/bandit, UP rules)
+ruff format --check .        # formatting
+mypy trendforge main.py      # types (typecheck CI job)
 bandit -r trendforge main.py -lll   # high-severity security findings must be zero
 ```
