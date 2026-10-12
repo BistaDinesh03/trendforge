@@ -16,65 +16,11 @@ from trendforge.models import DailyReport, Snapshot, TrendingRepo
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 README_PATH = PROJECT_ROOT / "README.md"
+REPORTS_PATH = PROJECT_ROOT / "REPORTS.md"
 SNAPSHOT_FILENAME = "snapshots.json"
 GIT_TIMEOUT_SECONDS = 120
-
-README_TEMPLATE = """# TrendForge
-
-**Every day at 08:00 UTC, TrendForge studies the #1 GitHub Trending repository -
-metadata only - and forges an ORIGINAL open-source project that solves what
-users actually complain about.**
-
-## What TrendForge does
-
-1. Reads the daily GitHub Trending page and takes the #1 repository.
-2. Enriches it through the official GitHub API (license, topics, README text;
-   cached 24h, rate-limit aware, backs off on 403/429).
-3. Pulls the most-discussed open issues and categorizes the complaints.
-4. Explains *why* it trended (heuristics, plus an optional LLM pass).
-5. Designs an original project idea, writes a daily report, scaffolds the
-   project, and pushes everything back to GitHub.
-
-## Safety
-
-- **TrendForge never copies source code.** We only read metadata, README text,
-  issues, PRs, and discussions - never another repository's code.
-- Licenses are respected: permissive licenses allow reuse *with attribution*
-  (LICENSE, copyright, NOTICE preserved), copyleft keeps the same license, and
-  no-license repositories are link-and-summarize only.
-- No fake stars, no bots, no trending manipulation, no spam - ever.
-- All output is original: names, code, architecture, README, and docs.
-
-## Reports index
-
-{report_index}
-
-## Quickstart
-
-```bash
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\\Scripts\\activate
-pip install -r requirements.txt
-cp .env.example .env               # set GITHUB_TOKEN; OPENAI_API_KEY is optional
-python main.py --dry-run           # analyse + write files, no git push
-python main.py                     # full run, commits and pushes
-```
-
-Daily automation lives in `.github/workflows/daily.yml` (08:00 UTC). See
-[SETUP.md](SETUP.md) for the full setup guide.
-
-## Repository layout
-
-- `reports/` - daily analysis reports (this index is rebuilt each run)
-- `data/snapshots.json` - star/fork history used for star velocity
-- `generated/` - original project scaffolds, one per day
-- `trendforge/` - the pipeline (fetch, analyze, llm, generate, publish)
-- `templates/` - Jinja2 templates for reports and scaffold READMEs
-
-## License
-
-MIT - see [LICENSE](LICENSE).
-"""
+REPORTS_INDEX_START = "<!-- trendforge:reports:start -->"
+REPORTS_INDEX_END = "<!-- trendforge:reports:end -->"
 
 
 def record_snapshot(settings: Settings, repo: TrendingRepo, today: date) -> int:
@@ -87,7 +33,8 @@ def record_snapshot(settings: Settings, repo: TrendingRepo, today: date) -> int:
     if previous is not None:
         try:
             previous_date = date.fromisoformat(str(previous.get("date")))
-            previous_stars = int(previous.get("stars") or 0)
+            raw_stars = previous.get("stars")
+            previous_stars = int(raw_stars) if isinstance(raw_stars, (int, float)) else 0
             elapsed_days = max((today - previous_date).days, 1)
             velocity = round((repo.total_stars - previous_stars) / elapsed_days)
         except (TypeError, ValueError):
@@ -140,15 +87,30 @@ def write_report(settings: Settings, report: DailyReport) -> Path:
 
 
 def update_readme_index(settings: Settings) -> Path:
-    """Rewrite README.md with the report index and the safety policy."""
+    """Refresh the report list between sentinels in README.md.
+
+    Only the block between REPORTS_INDEX_START and REPORTS_INDEX_END is
+    rewritten; the rest of the README stays untouched. When the sentinels are
+    missing or reversed (for example on a fresh clone), the index is written
+    to REPORTS.md instead and README.md is never modified.
+    """
     report_paths = sorted(settings.reports_dir.glob("*.md"), reverse=True)
     if report_paths:
-        index_lines = [f"- [{path.stem}](reports/{path.stem}.md)" for path in report_paths]
+        index = "\n".join(f"- [{path.stem}](reports/{path.stem}.md)" for path in report_paths)
     else:
-        index_lines = ["_No reports yet - run `python main.py --dry-run` to create one._"]
-    content = README_TEMPLATE.format(report_index="\n".join(index_lines))
-    README_PATH.write_text(content, encoding="utf-8", newline="\n")
-    return README_PATH
+        index = "_No reports yet - run `python main.py --dry-run` to create one._"
+    try:
+        text = README_PATH.read_text(encoding="utf-8")
+    except OSError:
+        text = ""
+    start = text.find(REPORTS_INDEX_START)
+    end = text.find(REPORTS_INDEX_END)
+    if start != -1 and end > start:
+        prefix = text[: start + len(REPORTS_INDEX_START)]
+        README_PATH.write_text(f"{prefix}\n{index}\n{text[end:]}", encoding="utf-8", newline="\n")
+        return README_PATH
+    REPORTS_PATH.write_text(f"# Reports\n\n{index}\n", encoding="utf-8", newline="\n")
+    return REPORTS_PATH
 
 
 def git_commit_and_push(settings: Settings, message: str) -> bool:
@@ -162,7 +124,11 @@ def git_commit_and_push(settings: Settings, message: str) -> bool:
         return False
     try:
         _ensure_identity(git)
-        _git(git, ["add", "reports", "data", "generated", "README.md"])
+        staged = ["reports", "data", "generated"]
+        for extra in (README_PATH, REPORTS_PATH):
+            if extra.exists():
+                staged.append(extra.name)
+        _git(git, ["add", *staged])
         committed = _git(git, ["commit", "-m", message])
         if committed.returncode != 0:
             print("[trendforge] nothing to commit (working tree unchanged)")
