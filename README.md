@@ -12,9 +12,10 @@
 <p align="center">
   <a href="https://github.com/BistaDinesh03/trendforge/actions/workflows/ci.yml"><img src="https://github.com/BistaDinesh03/trendforge/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/BistaDinesh03/trendforge/actions/workflows/codeql.yml"><img src="https://github.com/BistaDinesh03/trendforge/actions/workflows/codeql.yml/badge.svg" alt="CodeQL"></a>
-  <img src="https://img.shields.io/github/v/release/BistaDinesh03/trendforge" alt="Latest release">
   <img src="https://img.shields.io/badge/python-3.11%2B-2563EB" alt="Python 3.11+">
   <img src="https://img.shields.io/badge/license-MIT-2563EB" alt="License: MIT">
+  <img src="https://img.shields.io/badge/ruff-checked-2563EB" alt="Ruff checked">
+  <img src="https://img.shields.io/badge/bandit-pass-16A34A" alt="Bandit pass">
 </p>
 
 <p align="center">
@@ -147,4 +148,12 @@ metadata reads never result in copied source.
 ---
 
 Built with httpx, PyGithub, BeautifulSoup, Pydantic, and Jinja2.
-Made by [@BistaDinesh03](https://github.com/BistaDinesh03)
+
+## Contributors
+
+- [@BistaDinesh03](https://github.com/BistaDinesh03) - maintainer
+
+<!-- Hand-maintained, human-only list on purpose. A dynamic contributor image
+     (contrib.rocks / all-contributors) also renders bot accounts -
+     dependabot[bot], github-actions[bot], github-advanced-security[bot] -
+     which are automation, not people. Add humans here by hand. -->
