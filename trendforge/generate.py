@@ -221,13 +221,13 @@ def _service_main(name: str, slug: str) -> str:
         "\n"
         "from fastapi import FastAPI\n"
         "\n"
-        f"app = FastAPI(title={_py_string(name)}, version=\"0.1.0\")\n"
+        f'app = FastAPI(title={_py_string(name)}, version="0.1.0")\n'
         "\n"
         "\n"
-        "@app.get(\"/health\")\n"
+        '@app.get("/health")\n'
         "def health() -> dict[str, str]:\n"
         '    """Liveness probe used by CI, Docker, and the Makefile."""\n'
-        f"    return {{\"service\": {_py_string(slug)}, \"status\": \"ok\"}}\n"
+        f'    return {{"service": {_py_string(slug)}, "status": "ok"}}\n'
     )
 
 
@@ -243,9 +243,9 @@ def _smoke_test(package: str, name: str) -> str:
         "def test_health_endpoint() -> None:\n"
         '    """The service must answer /health with a JSON status."""\n'
         "    client = TestClient(app)\n"
-        "    response = client.get(\"/health\")\n"
+        '    response = client.get("/health")\n'
         "    assert response.status_code == 200\n"
-        "    assert response.json()[\"status\"] == \"ok\"\n"
+        '    assert response.json()["status"] == "ok"\n'
     )
 
 

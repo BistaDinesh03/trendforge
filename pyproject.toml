@@ -1,6 +1,6 @@
 [project]
 name = "trendforge"
-version = "1.0.0"
+version = "0.1.0"
 description = "Daily GitHub Trending analysis that designs and scaffolds an original open-source project."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.2", "ruff>=0.6", "bandit>=1.7.9"]
+dev = ["pytest>=8.2", "ruff>=0.6", "bandit>=1.7.9", "mypy>=1.10"]
 
 [tool.ruff]
 line-length = 100

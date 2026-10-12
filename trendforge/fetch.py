@@ -27,7 +27,7 @@ from trendforge.models import Complaint, TrendingRepo
 TRENDING_URL = "https://github.com/trending?since=daily"
 API_BASE_URL = "https://api.github.com"
 CACHE_TTL_SECONDS = 24 * 60 * 60
-HTTP_TIMEOUT_SECONDS = 20.0
+HTTP_TIMEOUT_SECONDS = 20
 MAX_README_CHARS = 20_000
 TOP_COMPLAINTS = 30
 

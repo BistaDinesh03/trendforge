@@ -52,19 +52,22 @@ def build_user_prompt(
 ) -> str:
     """Assemble the analysis prompt from metadata, themes, and complaint titles."""
     theme_lines = "\n".join(f"- {name}: {count}" for name, count in themes) or "- none"
-    complaint_lines = "\n".join(
-        f"- [{item.category}] {item.title} "
-        f"({item.comments} comments, {item.reactions} reactions) {item.url}"
-        for item in complaints[:12]
-    ) or "- none"
+    complaint_lines = (
+        "\n".join(
+            f"- [{item.category}] {item.title} "
+            f"({item.comments} comments, {item.reactions} reactions) {item.url}"
+            for item in complaints[:12]
+        )
+        or "- none"
+    )
     return f"""Repo metadata (metadata only, no code was read):
 - full name: {repo.owner}/{repo.name}
 - url: {repo.url}
 - description: {repo.description}
 - language: {repo.language}
 - stars today / total / forks: {repo.stars_today} / {repo.total_stars} / {repo.forks}
-- license: {repo.license_spdx or 'unknown'}
-- topics: {', '.join(repo.topics) or 'none'}
+- license: {repo.license_spdx or "unknown"}
+- topics: {", ".join(repo.topics) or "none"}
 
 Top complaint themes (category: count):
 {theme_lines}

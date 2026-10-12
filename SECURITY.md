@@ -8,6 +8,10 @@ Please report security issues **privately**, using
 exploitable vulnerability. Include the affected component, a reproduction using
 only public data, and the impact you observed.
 
+- **Acknowledgement SLA: 48 hours** from report receipt.
+- Target remediation: 7 days for high severity, 30 days for the rest, or a
+  published mitigation/workaround.
+
 ## TrendForge specifics
 
 - TrendForge runs daily in GitHub Actions (`.github/workflows/daily.yml`) with

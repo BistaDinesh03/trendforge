@@ -1,0 +1,10 @@
+site_name: TrendForge
+site_description: Daily GitHub Trending analysis that designs and scaffolds an original open-source project.
+repo_url: https://github.com/BistaDinesh03/trendforge
+theme:
+  name: mkdocs
+nav:
+  - Home: index.md
+  - How it works: how-it-works.md
+  - Launch checklist: launch-checklist.md
+  - Health checklist: health-checklist.md

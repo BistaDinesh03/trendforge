@@ -142,8 +142,8 @@ def run(args: argparse.Namespace) -> int:
     report_path = write_report(settings, report)
     _log(f"report: {report_path}")
 
-    update_readme_index(settings)
-    _log("README index updated")
+    index_path = update_readme_index(settings)
+    _log(f"report index: {index_path}")
 
     git_commit_and_push(
         settings,
