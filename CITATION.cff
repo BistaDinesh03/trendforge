@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "TrendForge"
+type: software
+version: 0.1.0
+date-released: 2026-10-11
+license: MIT
+repository-code: "https://github.com/BistaDinesh03/trendforge"
+authors:
+  - name: BistaDinesh03
+keywords:
+  - github-trending
+  - repo-analysis
+  - scaffolding
+abstract: >-
+  Daily GitHub Trending analysis that designs and scaffolds an original
+  open-source project.

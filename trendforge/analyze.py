@@ -49,8 +49,7 @@ NO_LICENSE_NOTES = (
     "link to the repository and summarize only."
 )
 UNKNOWN_NOTES = (
-    "Unrecognized license identifier: treat as no-reuse until the license is verified "
-    "manually."
+    "Unrecognized license identifier: treat as no-reuse until the license is verified manually."
 )
 DEFAULT_THEME = "other"
 
